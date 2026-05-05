@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Luciana 5km">
+<title>Luciana Malta — Plano 5km</title>
+<style>
+:root{
+  --bg:#080f0a;--s1:#0f1a11;--s2:#172019;--s3:#1f2c21;
+  --border:rgba(255,255,255,0.07);
+  --vd:#4ade80;--vd-dim:rgba(74,222,128,0.13);
+  --tl:#2dd4bf;--tl-dim:rgba(45,212,191,0.13);
+  --am:#fbbf24;--am-dim:rgba(251,191,36,0.13);
+  --vm:#f87171;--vm-dim:rgba(248,113,113,0.13);
+  --az:#60a5fa;--az-dim:rgba(96,165,250,0.13);
+  --text:#eef5ef;--text2:#7a9e80;--text3:#3d5e42;
+  --r:14px;--rsm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;min-height:100vh;padding-bottom:100px;}
+
+.hdr{background:var(--bg);padding:52px 18px 14px;border-bottom:1px solid var(--border);}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.hdr-logo{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;}
+.hdr-badge{background:var(--vd-dim);color:var(--vd);font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;border:1px solid rgba(74,222,128,.2);}
+.hdr-title{font-size:26px;font-weight:700;line-height:1.15;}
+.hdr-title span{color:var(--vd);}
+.hdr-sub{font-size:13px;color:var(--text2);margin-top:3px;}
+
+.wpills{display:flex;gap:7px;padding:14px 18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.wpills::-webkit-scrollbar{display:none;}
+.wp{flex-shrink:0;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--s1);color:var(--text2);cursor:pointer;transition:all .18s;}
+.wp.active{background:var(--vd);color:#061008;border-color:var(--vd);font-weight:700;}
+.wp.done{border-color:var(--vd);color:var(--vd);}
+
+.phase{margin:0 18px 14px;padding:10px 14px;border-radius:var(--rsm);border:1px solid;font-size:12px;font-weight:600;letter-spacing:.04em;}
+.p1{background:var(--vd-dim);border-color:rgba(74,222,128,.25);color:var(--vd);}
+.p2{background:var(--tl-dim);border-color:rgba(45,212,191,.25);color:var(--tl);}
+.p3{background:var(--az-dim);border-color:rgba(96,165,250,.25);color:var(--az);}
+.p4{background:var(--am-dim);border-color:rgba(251,191,36,.25);color:var(--am);}
+.p5{background:var(--vm-dim);border-color:rgba(248,113,113,.25);color:var(--vm);}
+
+.content{padding:0 18px;}
+
+/* DAY CARD */
+.dcard{background:var(--s1);border-radius:var(--r);margin-bottom:10px;border:1px solid var(--border);overflow:hidden;transition:border-color .2s;}
+.dcard.done2{border-color:rgba(74,222,128,.4);}
+.dcard.skip2{opacity:.5;}
+
+.dhdr{display:flex;align-items:center;gap:11px;padding:13px 15px;cursor:pointer;}
+.ddot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:700;}
+.dot-vd{background:var(--vd-dim);color:var(--vd);}
+.dot-tl{background:var(--tl-dim);color:var(--tl);}
+.dot-am{background:var(--am-dim);color:var(--am);}
+.dot-vm{background:var(--vm-dim);color:var(--vm);}
+.dot-az{background:var(--az-dim);color:var(--az);}
+.dot-cz{background:rgba(255,255,255,.05);color:var(--text2);}
+.dot-ok{background:var(--vd-dim);color:var(--vd);}
+.dot-ko{background:var(--vm-dim);color:var(--vm);}
+
+.dinfo{flex:1;min-width:0;}
+.dname{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;}
+.dtitle{font-size:15px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ddesc{font-size:11px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* pace chip shown in header when recorded */
+.pace-chip{display:inline-flex;align-items:center;gap:4px;background:var(--vd-dim);border:1px solid rgba(74,222,128,.3);color:var(--vd);font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;font-family:'Courier New',monospace;margin-top:3px;}
+
+.dbtns{display:flex;gap:5px;flex-shrink:0;}
+.dbtn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.dbtn:active{transform:scale(.88);}
+.dbtn.ok{background:var(--vd-dim);border-color:var(--vd);}
+.dbtn.ko{background:var(--vm-dim);border-color:var(--vm);}
+
+/* DETAIL */
+.ddetail{padding:0 15px 14px;display:none;}
+.ddetail.open{display:block;}
+.ddiv{height:1px;background:var(--border);margin-bottom:12px;}
+
+/* PACE BADGES */
+.zbadge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:10px;font-family:'Courier New',monospace;}
+.zb-vd{background:var(--vd-dim);color:var(--vd);border:1px solid rgba(74,222,128,.2);}
+.zb-tl{background:var(--tl-dim);color:var(--tl);border:1px solid rgba(45,212,191,.2);}
+.zb-am{background:var(--am-dim);color:var(--am);border:1px solid rgba(251,191,36,.2);}
+.zb-vm{background:var(--vm-dim);color:var(--vm);border:1px solid rgba(248,113,113,.2);}
+.zb-az{background:var(--az-dim);color:var(--az);border:1px solid rgba(96,165,250,.2);}
+.zb-cz{background:rgba(255,255,255,.05);color:var(--text2);border:1px solid var(--border);}
+
+.detail-desc{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.detail-note{font-size:12px;color:var(--text2);line-height:1.5;font-style:italic;margin-bottom:12px;padding:8px 10px;background:rgba(74,222,128,.05);border-radius:8px;border-left:2px solid var(--vd);}
+
+/* PACE INPUT SECTION */
+.pace-section{background:var(--s2);border-radius:var(--rsm);padding:12px 14px;margin-top:2px;}
+.pace-section-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;}
+.pace-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.pace-row:last-child{margin-bottom:0;}
+.pace-label{font-size:12px;color:var(--text2);flex:1;}
+.pace-input-wrap{display:flex;align-items:center;gap:6px;}
+.pace-input{
+  background:var(--s3);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-size:14px;font-family:'Courier New',monospace;font-weight:600;
+  padding:7px 10px;width:90px;text-align:center;outline:none;
+  -webkit-appearance:none;
+}
+.pace-input:focus{border-color:var(--vd);}
+.pace-input::placeholder{color:var(--text3);font-size:12px;}
+.pace-unit{font-size:11px;color:var(--text2);}
+.pace-save-btn{
+  background:var(--vd);color:#061008;border:none;border-radius:8px;
+  font-size:13px;font-weight:700;padding:8px 16px;cursor:pointer;
+  margin-top:10px;width:100%;transition:opacity .15s;
+}
+.pace-save-btn:active{opacity:.8;}
+.pace-saved-msg{font-size:12px;color:var(--vd);text-align:center;margin-top:6px;display:none;}
+
+/* NOTAS */
+.notes-wrap{margin-top:10px;}
+.notes-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+.notes-input{
+  width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);
+  color:var(--text);font-size:13px;padding:10px 12px;resize:none;outline:none;
+  font-family:-apple-system,sans-serif;line-height:1.5;min-height:70px;
+  -webkit-appearance:none;
+}
+.notes-input:focus{border-color:var(--vd);}
+.notes-input::placeholder{color:var(--text3);}
+.notes-save-btn{
+  background:transparent;color:var(--vd);border:1px solid rgba(74,222,128,.3);border-radius:8px;
+  font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;margin-top:7px;
+  width:100%;transition:all .15s;
+}
+.notes-save-btn:active{background:var(--vd-dim);}
+
+/* TIPBOX */
+.tipbox{margin-top:10px;padding:9px 12px;background:rgba(74,222,128,.06);border-radius:var(--rsm);border-left:3px solid var(--vd);font-size:12px;color:var(--text2);line-height:1.5;}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);display:flex;padding:8px 0 26px;z-index:100;}
+.nitem{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.nicon{font-size:20px;}
+.nlabel{font-size:10px;font-weight:500;color:var(--text3);}
+.nitem.active .nlabel{color:var(--vd);}
+.ndot{width:4px;height:4px;border-radius:50%;background:var(--vd);margin-top:1px;}
+
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* REF & PROG */
+.sec-pad{padding:18px 18px 0;}
+.sec-title{font-size:22px;font-weight:700;margin-bottom:3px;}
+.sec-sub{font-size:14px;color:var(--text2);margin-bottom:18px;}
+.rcard{background:var(--s1);border-radius:var(--r);padding:15px;margin-bottom:14px;border:1px solid var(--border);}
+.rttl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:11px;}
+.rrow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.rrow:last-child{border-bottom:none;}
+.rlbl{font-size:13px;color:var(--text2);}
+.rval{font-family:'Courier New',monospace;font-size:13px;font-weight:600;}
+.pbar-wrap{background:var(--s2);border-radius:6px;height:6px;overflow:hidden;margin-bottom:7px;}
+.pbar-fill{height:6px;border-radius:6px;background:var(--vd);transition:width .5s ease;}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px;}
+.pstat{background:var(--s2);border-radius:var(--rsm);padding:10px;}
+.pnum{font-size:22px;font-weight:700;}
+.plbl{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* PACE HISTORY in progress screen */
+.pace-history{margin-top:14px;}
+.ph-item{background:var(--s2);border-radius:var(--rsm);padding:10px 13px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
+.ph-day{font-size:12px;color:var(--text2);}
+.ph-pace{font-family:'Courier New',monospace;font-size:14px;font-weight:700;color:var(--vd);}
+.ph-note{font-size:11px;color:var(--text3);margin-top:2px;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="hdr-logo">🏃‍♀️ Luciana Malta</div>
+    <div class="hdr-badge" id="today-lbl">—</div>
+  </div>
+  <div class="hdr-title">5km · Pace <span>7'03 → 6'20</span></div>
+  <div class="hdr-sub">42 anos · 58kg · 12 semanas · 6 dias/semana</div>
+</div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="wpills" id="week-bar"></div>
+  <div class="phase" id="phase-banner"></div>
+  <div class="content" id="days-list"></div>
+</div>
+
+<!-- REFERÊNCIA -->
+<div class="screen" id="screen-ref">
+  <div class="sec-pad">
+    <div class="sec-title">Referência</div>
+    <div class="sec-sub">Zonas de pace e fases</div>
+
+    <div class="rcard">
+      <div class="rttl">Zonas de pace — Luciana</div>
+      <div class="rrow"><span class="rlbl">Z1 — Fácil</span><span class="rval" style="color:var(--vd)">7'30–8'00</span></div>
+      <div class="rrow"><span class="rlbl">Z2 — Moderado</span><span class="rval" style="color:var(--tl)">7'00–7'30</span></div>
+      <div class="rrow"><span class="rlbl">Z3 — Limiar</span><span class="rval" style="color:var(--am)">6'30–6'50</span></div>
+      <div class="rrow"><span class="rlbl">Z4 — Tiro/VO₂max</span><span class="rval" style="color:var(--vm)">5'50–6'20</span></div>
+      <div class="rrow"><span class="rlbl">🎯 Ritmo Meta</span><span class="rval" style="color:var(--az)">6'20</span></div>
+    </div>
+
+    <div class="rcard">
+      <div class="rttl">Fases do plano</div>
+      <div class="rrow"><span class="rlbl">Fase 1 — Base Aeróbica</span><span class="rval" style="color:var(--vd)">Sem 1–3</span></div>
+      <div class="rrow"><span class="rlbl">Fase 2 — Intro ao Limiar</span><span class="rval" style="color:var(--tl)">Sem 4–6</span></div>
+      <div class="rrow"><span class="rlbl">Fase 3 — Desenvolvimento</span><span class="rval" style="color:var(--az)">Sem 7–9</span></div>
+      <div class="rrow"><span class="rlbl">Fase 4 — Específico 5km</span><span class="rval" style="color:var(--am)">Sem 10–11</span></div>
+      <div class="rrow"><span class="rlbl">Fase 5 — Taper + Teste</span><span class="rval" style="color:var(--vm)">Sem 12</span></div>
+    </div>
+
+    <div class="rcard">
+      <div class="rttl">Como registrar o pace</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">
+        Após cada treino, abra o card do dia, preencha o pace real no campo <strong style="color:var(--text)">⏱ Pace real</strong> no formato <span style="font-family:'Courier New',monospace;color:var(--vd)">6:45</span> e toque em <strong style="color:var(--vd)">Salvar</strong>. O pace aparecerá fixo no card e no histórico de progresso.
+      </div>
+    </div>
+
+    <div class="rcard">
+      <div class="rttl">Estratégia de prova (Sem. 12)</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">
+        Km 1–2: saia em <strong style="color:var(--text);font-family:'Courier New',monospace;">6'30</strong> — mais lento que a meta.<br>
+        Km 3: acelere para <strong style="color:var(--text);font-family:'Courier New',monospace;">6'20</strong>.<br>
+        Km 4–5: se sentir bem, <strong style="color:var(--vd)">acelere mais</strong>. Nunca estoure no início.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESSO -->
+<div class="screen" id="screen-prog">
+  <div class="sec-pad">
+    <div class="sec-title">Progresso</div>
+    <div class="sec-sub">Treinos e paces registrados</div>
+
+    <div class="rcard">
+      <div class="rttl">Conclusão geral</div>
+      <div class="pbar-wrap"><div class="pbar-fill" id="prog-bar" style="width:0%"></div></div>
+      <div style="font-size:12px;color:var(--text2);" id="prog-lbl">0 de 72 treinos concluídos</div>
+      <div class="pgrid">
+        <div class="pstat"><div class="pnum" id="stat-done" style="color:var(--vd)">0</div><div class="plbl">Realizados ✅</div></div>
+        <div class="pstat"><div class="pnum" id="stat-skip" style="color:var(--vm)">0</div><div class="plbl">Pulados ❌</div></div>
+      </div>
+    </div>
+
+    <div class="rcard">
+      <div class="rttl">Por semana</div>
+      <div id="week-prog"></div>
+    </div>
+
+    <div class="rcard">
+      <div class="rttl">🏃‍♀️ Histórico de paces registrados</div>
+      <div id="pace-history-list">
+        <div style="font-size:13px;color:var(--text3);padding:8px 0;">Nenhum pace registrado ainda. Complete treinos e registre seus paces!</div>
+      </div>
+    </div>
+
+    <div class="rcard" style="border-color:rgba(74,222,128,.3);">
+      <div class="rttl">Meta</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">
+        <span style="font-size:30px;font-weight:700;color:var(--vd);font-family:'Courier New',monospace;">6'20</span>
+        <span style="font-size:14px;color:var(--text2)">/ km nos 5km</span>
+      </div>
+      <div style="font-size:12px;color:var(--text2);">Pace atual: <span style="font-family:'Courier New',monospace;color:var(--text2)">7'03/km</span> · Melhora: <span style="font-family:'Courier New',monospace;color:var(--am)">43s/km</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="bnav">
+  <div class="nitem active" onclick="showScreen('home')">
+    <div class="nicon">📅</div><div class="nlabel">Treinos</div><div class="ndot"></div>
+  </div>
+  <div class="nitem" onclick="showScreen('ref')">
+    <div class="nicon">📋</div><div class="nlabel">Referência</div>
+  </div>
+  <div class="nitem" onclick="showScreen('prog')">
+    <div class="nicon">📈</div><div class="nlabel">Progresso</div>
+  </div>
+</div>
+
+<script>
+// ── DADOS ─────────────────────────────────────────────────────────────────────
+const FASES=[
+  {label:'Fase 1 — Base Aeróbica',cls:'p1'},
+  {label:'Fase 1 — Base Aeróbica',cls:'p1'},
+  {label:'Fase 1 — Base Aeróbica',cls:'p1'},
+  {label:'Fase 2 — Introdução ao Limiar',cls:'p2'},
+  {label:'Fase 2 — Introdução ao Limiar',cls:'p2'},
+  {label:'Fase 2 — Recuperação',cls:'p2'},
+  {label:'Fase 3 — Desenvolvimento de Velocidade',cls:'p3'},
+  {label:'Fase 3 — Desenvolvimento de Velocidade',cls:'p3'},
+  {label:'Fase 3 — Desenvolvimento de Velocidade',cls:'p3'},
+  {label:'Fase 4 — Específico 5km 🎯',cls:'p4'},
+  {label:'Fase 4 — Específico 5km',cls:'p4'},
+  {label:'Fase 5 — Taper + Corrida Teste 🏁',cls:'p5'},
+];
+
+const ZONA_CFG={
+  'Z1 Fácil':{cls:'zb-vd',icon:'🟢'},
+  'Z2 Base':{cls:'zb-tl',icon:'🔵'},
+  'Z3 Limiar':{cls:'zb-am',icon:'🟡'},
+  'Z4 Tiro':{cls:'zb-vm',icon:'🔴'},
+  'Z1–Z2':{cls:'zb-tl',icon:'🔵'},
+  'Z3–Z4':{cls:'zb-am',icon:'🟡'},
+  'Descanso':{cls:'zb-cz',icon:'😴'},
+  'Meta':{cls:'zb-az',icon:'🎯'},
+  'Prova':{cls:'zb-vm',icon:'🏁'},
+};
+
+const DOT_ZONA={
+  'Z1 Fácil':'dot-vd','Z2 Base':'dot-tl','Z3 Limiar':'dot-am',
+  'Z4 Tiro':'dot-vm','Z1–Z2':'dot-tl','Z3–Z4':'dot-am',
+  'Descanso':'dot-cz','Meta':'dot-az','Prova':'dot-vm',
+};
+
+const SEMANAS=[
+  // SEM 1
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'25–30 min contínuos',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Conversa plena — se não conseguir falar, está rápido demais'},
+    {dia:'Terça',tipo:'Caminhada + strides',desc:'20 min caminhada + 4×100m progressivos',pace:"7min00–7min30",zona:'Z2 Base',nota:'Strides: acelere gradualmente nos 100m, não sprint'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'30 min contínuos',pace:"7min00–7min30",zona:'Z2 Base',nota:'Ritmo confortável — consiga falar frases curtas'},
+    {dia:'Quinta',tipo:'Corrida fácil',desc:'25 min contínuos',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Dia leve — recuperação ativa'},
+    {dia:'Sexta',tipo:'Fartlek suave',desc:'25 min: 3 min fácil / 1 min moderado',pace:"7min00–7min45",zona:'Z1–Z2',nota:'Fartlek = treino por sensação, sem relógio de pace'},
+    {dia:'Sábado',tipo:'Longão fácil',desc:'35–40 min no ritmo confortável',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Longão mais leve das 12 semanas'},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total ou caminhada leve',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 2
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'30 min contínuos',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Mesma zona da semana 1 — mais volume'},
+    {dia:'Terça',tipo:'Tiros 200m',desc:'6×200m com 60s caminhada recuperação',pace:"5min50–6min20",zona:'Z4 Tiro',nota:'Primeiros tiros: controle de passada, não sprint'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'32 min contínuos',pace:"7min00–7min30",zona:'Z2 Base',nota:'Leve progressão de volume vs semana 1'},
+    {dia:'Quinta',tipo:'Corrida fácil',desc:'28 min contínuos',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Recuperação ativa após os tiros de terça'},
+    {dia:'Sexta',tipo:'Fartlek',desc:'28 min: 3 min facil / 1min30 moderado',pace:"6min50–7min30",zona:'Z1–Z2',nota:'Leve progressão no tempo do bloco moderado'},
+    {dia:'Sábado',tipo:'Longão fácil',desc:'40–45 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Pace não importa — só o tempo em movimento'},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 3
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'30 min contínuos',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Terça',tipo:'Tiros 200m',desc:'8×200m com 60s caminhada',pace:"5min50–6min20",zona:'Z4 Tiro',nota:'2 tiros a mais que semana 2 — mesmo pace'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'35 min',pace:"7min00–7min30",zona:'Z2 Base',nota:''},
+    {dia:'Quinta',tipo:'Corrida fácil',desc:'30 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Sexta',tipo:'Corrida técnica',desc:'25 min + 6×strides 100m',pace:"7min00–7min30",zona:'Z2 Base',nota:'Strides: foco em cadência e postura'},
+    {dia:'Sábado',tipo:'Longão fácil',desc:'45–50 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Maior longão até agora — hidrate-se bem'},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 4
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'30 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Terça',tipo:'Tiros 400m',desc:'5×400m com 90s recuperação trotando',pace:"6min00–6min30",zona:'Z4 Tiro',nota:'Tiros mais longos — controle o pace desde o início'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'35 min',pace:"7min00–7min30",zona:'Z2 Base',nota:''},
+    {dia:'Quinta',tipo:'Intro limiar',desc:'2×8 min no ritmo limiar com 3 min trote',pace:"6min30–6min50",zona:'Z3 Limiar',nota:'Primeiro treino de limiar — ritmo puxado mas sustentável'},
+    {dia:'Sexta',tipo:'Corrida fácil',desc:'28 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Recuperação após limiar'},
+    {dia:'Sábado',tipo:'Longão moderado',desc:'45–50 min (últimos 10 min em Z2)',pace:"7min00–7min45",zona:'Z1–Z2',nota:'Primeiro longão com progressão de pace no final'},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 5
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'32 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Terça',tipo:'Tiros 400m',desc:'6×400m com 90s recuperação',pace:"6min00–6min30",zona:'Z4 Tiro',nota:'1 tiro a mais — mesmo pace de controle'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'37 min',pace:"7min00–7min30",zona:'Z2 Base',nota:''},
+    {dia:'Quinta',tipo:'Tempo run',desc:'15 min contínuos no ritmo limiar',pace:"6min30–6min50",zona:'Z3 Limiar',nota:'Contínuo é mais difícil que intervalado — pace controlado'},
+    {dia:'Sexta',tipo:'Strides + fácil',desc:'30 min fácil + 6×strides 100m',pace:"7min00–7min30",zona:'Z1–Z2',nota:''},
+    {dia:'Sábado',tipo:'Longão moderado',desc:'50 min (últimos 15 min em Z2)',pace:"7min00–7min45",zona:'Z1–Z2',nota:''},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 6 recuperação
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'25 min leve',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'⚡ Semana de recuperação — volume reduzido 30%'},
+    {dia:'Terça',tipo:'Tiros curtos',desc:'4×200m com 60s recuperação',pace:"6min00–6min30",zona:'Z4 Tiro',nota:'Volume baixo — manter estímulo neural'},
+    {dia:'Quarta',tipo:'Corrida fácil',desc:'28 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Quinta',tipo:'Corrida regenerativa',desc:'25 min muito leve',pace:"7min45–8min00",zona:'Z1 Fácil',nota:'Recuperação total — não force'},
+    {dia:'Sexta',tipo:'Strides',desc:'20 min fácil + 4×strides 100m',pace:"7min00–7min30",zona:'Z2 Base',nota:''},
+    {dia:'Sábado',tipo:'Longão curto',desc:'35–40 min fácil',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Longão mais curto — semana de recuperação'},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 7
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'32 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Terça',tipo:'Tiros 400m',desc:'7×400m com 90s recuperação',pace:"5min55–6min25",zona:'Z4 Tiro',nota:'Pace ligeiramente mais rápido que fases anteriores'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'38 min',pace:"7min00–7min20",zona:'Z2 Base',nota:''},
+    {dia:'Quinta',tipo:'Tempo run',desc:'20 min contínuos no limiar',pace:"6min25–6min45",zona:'Z3 Limiar',nota:'Pace do limiar aproximando-se da meta'},
+    {dia:'Sexta',tipo:'Pace run intro',desc:'10 min aquec + 2km ritmo meta + 10 min volta',pace:"6min20–6min30",zona:'Z3–Z4',nota:'Primeiro contato com o ritmo meta de 6\'20'},
+    {dia:'Sábado',tipo:'Longão progressivo',desc:'50–55 min: Z1 nos 35min + Z2 nos últimos 15min',pace:"7min00–7min45",zona:'Z1–Z2',nota:''},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 8
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'33 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Terça',tipo:'Tiros 600m',desc:'5×600m com 2 min recuperação trotando',pace:"6min00–6min25",zona:'Z4 Tiro',nota:'Tiros mais longos — exigem mais controle de pace'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'40 min',pace:"7min00–7min20",zona:'Z2 Base',nota:''},
+    {dia:'Quinta',tipo:'Tempo run',desc:'22 min contínuos no limiar',pace:"6min25–6min45",zona:'Z3 Limiar',nota:''},
+    {dia:'Sexta',tipo:'Pace run',desc:'10 min aquec + 3km ritmo meta + 10 min volta',pace:"6min20–6min30",zona:'Z3–Z4',nota:'3km no ritmo meta — observe como se sente'},
+    {dia:'Sábado',tipo:'Longão progressivo',desc:'55 min: Z1 nos 35min + Z2 nos últimos 20min',pace:"7min00–7min30",zona:'Z1–Z2',nota:''},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 9
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'33 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Terça',tipo:'Tiros 800m',desc:'5×800m com 2 min recuperação',pace:"5min55–6min20",zona:'Z4 Tiro',nota:'Tiros de 800m — mais próximo da distância de prova'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'40 min',pace:"6min55–7min20",zona:'Z2 Base',nota:'Pace moderado progredindo'},
+    {dia:'Quinta',tipo:'Tempo run',desc:'25 min contínuos no limiar',pace:"6min20–6min40",zona:'Z3 Limiar',nota:'Limiar tocando a meta — observe a evolução'},
+    {dia:'Sexta',tipo:'Pace run',desc:'10 min aquec + 4km ritmo meta + 10 min volta',pace:"6min20",zona:'Z3–Z4',nota:'4km contínuos no ritmo meta — consistência'},
+    {dia:'Sábado',tipo:'Longão progressivo',desc:'55–60 min progressivo',pace:"6min55–7min30",zona:'Z1–Z2',nota:''},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 10
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'33 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Terça',tipo:'Tiros 1km',desc:'5x1km com 2min30 recuperacao',pace:"6min00–6min20",zona:'Z4 Tiro',nota:'Tiros no ritmo da prova — foco em consistência'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'38 min',pace:"6min55–7min15",zona:'Z2 Base',nota:''},
+    {dia:'Quinta',tipo:'Tempo + pace',desc:'15 min limiar + 5 min no ritmo meta',pace:"6min20–6min40",zona:'Z3–Z4',nota:'Combinação limiar + meta'},
+    {dia:'Sexta',tipo:'🎯 TESTE 5km',desc:'Aquec 10 min + 5km máximo + volta 10 min',pace:'Máximo',zona:'Prova',nota:'REGISTRE SEU PACE E TEMPO TOTAL AQUI!'},
+    {dia:'Sábado',tipo:'Corrida fácil',desc:'30 min leve (recuperação pós-teste)',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Recuperação leve após o teste de sexta'},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 11
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'30 min',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Terça',tipo:'Tiros 1km',desc:'6x1km com 2min30 recuperacao',pace:"5min55–6min20",zona:'Z4 Tiro',nota:'Volume máximo de tiros do plano'},
+    {dia:'Quarta',tipo:'Corrida moderada',desc:'35 min',pace:"6min55–7min15",zona:'Z2 Base',nota:''},
+    {dia:'Quinta',tipo:'Pace run longo',desc:'10 min aquec + 5km ritmo meta + 10 min volta',pace:"6min20",zona:'Z3–Z4',nota:'5km contínuos no ritmo meta — confiança total'},
+    {dia:'Sexta',tipo:'Fácil + strides',desc:'28 min fácil + 4×strides',pace:"7min00–7min30",zona:'Z1–Z2',nota:''},
+    {dia:'Sábado',tipo:'Longão',desc:'55 min progressivo',pace:"6min55–7min30",zona:'Z1–Z2',nota:''},
+    {dia:'Domingo',tipo:'Descanso',desc:'Repouso total',pace:'—',zona:'Descanso',nota:''},
+  ],
+  // SEM 12 taper
+  [
+    {dia:'Segunda',tipo:'Corrida fácil',desc:'25 min muito leve',pace:"7min30–8min00",zona:'Z1 Fácil',nota:'Taper começa — volume cai 40%'},
+    {dia:'Terça',tipo:'Ativação',desc:'15 min fácil + 4×200m ritmo meta + 10 min fácil',pace:"6min20–6min30",zona:'Z4 Tiro',nota:'Manter estímulo neural — sem acumular fadiga'},
+    {dia:'Quarta',tipo:'Corrida fácil',desc:'22 min leve',pace:"7min30–8min00",zona:'Z1 Fácil',nota:''},
+    {dia:'Quinta',tipo:'Ativação leve',desc:'15 min fácil + 3×100m strides',pace:"7min00–7min30",zona:'Z2 Base',nota:'Pernas frescas para a prova'},
+    {dia:'Sexta',tipo:'Descanso',desc:'Repouso total — hidratação e alimentação',pace:'—',zona:'Descanso',nota:'Carboidrate e hidratação — não corra hoje'},
+    {dia:'Sábado',tipo:'🏁 CORRIDA TESTE 5km',desc:'Aquec 10 min + 5km ritmo meta + comemoração',pace:"6min20",zona:'Prova',nota:'Saia nos primeiros 2km em 6\'30 — acelere no km 3'},
+    {dia:'Domingo',tipo:'Descanso',desc:'Recuperação pós-prova — comemore! 🎉',pace:'—',zona:'Descanso',nota:''},
+  ],
+];
+
+// ── ESTADO ────────────────────────────────────────────────────────────────────
+let status={}, paces={}, notas={};
+function loadState(){
+  try{status=JSON.parse(localStorage.getItem('lucStatus')||'{}');}catch(e){}
+  try{status=JSON.parse(sessionStorage.getItem('lucStatus')||JSON.stringify(status));}catch(e){}
+  try{paces=JSON.parse(localStorage.getItem('lucPaces')||'{}');}catch(e){}
+  try{paces=JSON.parse(sessionStorage.getItem('lucPaces')||JSON.stringify(paces));}catch(e){}
+  try{notas=JSON.parse(localStorage.getItem('lucNotas')||'{}');}catch(e){}
+  try{notas=JSON.parse(sessionStorage.getItem('lucNotas')||JSON.stringify(notas));}catch(e){}
+}
+function save(){
+  try{localStorage.setItem('lucStatus',JSON.stringify(status));}catch(e){}
+  try{sessionStorage.setItem('lucStatus',JSON.stringify(status));}catch(e){}
+  try{localStorage.setItem('lucPaces',JSON.stringify(paces));}catch(e){}
+  try{sessionStorage.setItem('lucPaces',JSON.stringify(paces));}catch(e){}
+  try{localStorage.setItem('lucNotas',JSON.stringify(notas));}catch(e){}
+  try{sessionStorage.setItem('lucNotas',JSON.stringify(notas));}catch(e){}
+}
+
+loadState();
+let curWeek=0;
+
+function key(w,d){return `${w}-${d}`;}
+function todayIdx(){return {1:0,2:1,3:2,4:3,5:4,6:5,0:6}[new Date().getDay()];}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function dotLabel(d,k){
+  const s=status[k];
+  if(s==='done') return '✓';
+  if(s==='skip') return '✕';
+  const icons={'Z1 Fácil':'🟢','Z2 Base':'🔵','Z3 Limiar':'🟡','Z4 Tiro':'🔴','Z1–Z2':'🔵','Z3–Z4':'🟡','Descanso':'😴','Meta':'🎯','Prova':'🏁'};
+  return icons[d.zona]||'🏃';
+}
+function dotCls(d,k){
+  const s=status[k];
+  if(s==='done') return 'dot-ok';
+  if(s==='skip') return 'dot-ko';
+  return DOT_ZONA[d.zona]||'dot-vd';
+}
+
+function renderWeek(w){
+  const f=FASES[w];
+  const pb=document.getElementById('phase-banner');
+  pb.className='phase '+f.cls;
+  pb.textContent=f.label;
+
+  const todayI=todayIdx();
+  const el=document.getElementById('days-list');
+  el.innerHTML=SEMANAS[w].map((d,i)=>{
+    const k=key(w,i);
+    const s=status[k];
+    const cardCls=`dcard${s==='done'?' done2':s==='skip'?' skip2':''}`;
+    const open=i===todayI?' open':'';
+    const isRest=d.zona==='Descanso';
+    const zc=ZONA_CFG[d.zona]||{cls:'zb-vd',icon:'🏃'};
+    const savedPace=paces[k]||'';
+    const savedNota=notas[k]||'';
+
+    const paceChip=savedPace?`<div class="pace-chip">⏱ ${savedPace}/km</div>`:'';
+
+    const btns=isRest?'':`
+      <div class="dbtns" onclick="event.stopPropagation()">
+        <button class="dbtn ${s==='done'?'ok':''}" onclick="setS(${w},${i},'done')">✅</button>
+        <button class="dbtn ${s==='skip'?'ko':''}" onclick="setS(${w},${i},'skip')">❌</button>
+      </div>`;
+
+    const paceSection=isRest?'':`
+      <div class="pace-section">
+        <div class="pace-section-title">⏱ Pace real do treino</div>
+        <div class="pace-row">
+          <div class="pace-label">Pace médio atingido:</div>
+          <div class="pace-input-wrap">
+            <input class="pace-input" id="pi-${w}-${i}" type="tel" placeholder="6 45" value="${savedPace}" maxlength="4" inputmode="numeric" oninput="fmtPace(this)">
+            <span class="pace-unit">/km</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px;">Digite só os números · Ex: <span style="font-family:Courier New;color:var(--text2)">645</span> → <span style="font-family:Courier New;color:var(--vd)">6:45</span></div>
+        <button class="pace-save-btn" onclick="savePace(${w},${i})">Salvar pace</button>
+        <div class="pace-saved-msg" id="psm-${w}-${i}">✅ Pace salvo!</div>
+      </div>`;
+
+    const notaSection=isRest?'':`
+      <div class="notes-wrap">
+        <div class="notes-label">📝 Anotações do treino</div>
+        <textarea class="notes-input" id="ni-${w}-${i}" placeholder="Como foi? Sentiu bem? Alguma dor?">${savedNota}</textarea>
+        <button class="notes-save-btn" onclick="saveNota(${w},${i})">Salvar anotação</button>
+      </div>`;
+
+    const tipBox=d.nota?`<div class="tipbox">💡 ${d.nota}</div>`:'';
+
+    return `<div class="${cardCls}" id="dc-${w}-${i}">
+      <div class="dhdr" onclick="tog('dd-${w}-${i}')">
+        <div class="ddot ${dotCls(d,k)}">${dotLabel(d,k)}</div>
+        <div class="dinfo">
+          <div class="dname">${d.dia}</div>
+          <div class="dtitle">${d.tipo}</div>
+          <div class="ddesc">${d.desc}</div>
+          ${paceChip}
+        </div>
+        ${btns}
+      </div>
+      <div class="ddetail${open}" id="dd-${w}-${i}">
+        <div class="ddiv"></div>
+        ${d.pace!=='—'?`<span class="zbadge ${zc.cls}">${zc.icon} Alvo: ${d.pace} · ${d.zona}</span>`:''}
+        ${d.desc?`<div class="detail-desc">${d.desc}</div>`:''}
+        ${paceSection}
+        ${notaSection}
+        ${tipBox}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBar(){
+  const bar=document.getElementById('week-bar');
+  bar.innerHTML=Array.from({length:12},(_,i)=>{
+    const done=cntDone(i);
+    const cls=i===curWeek?'wp active':done>0?'wp done':'wp';
+    return `<div class="${cls}" onclick="selWeek(${i})">Sem ${i+1}</div>`;
+  }).join('');
+}
+
+function cntDone(w){
+  let n=0;
+  for(let d=0;d<7;d++) if(status[key(w,d)]==='done') n++;
+  return n;
+}
+
+function selWeek(w){curWeek=w;renderBar();renderWeek(w);}
+function tog(id){const el=document.getElementById(id);if(el)el.classList.toggle('open');}
+
+function setS(w,d,val){
+  const k=key(w,d);
+  status[k]=status[k]===val?null:val;
+  save();renderWeek(w);renderBar();updProg();
+}
+
+function fmtPace(inp){
+  // Mantém só dígitos
+  let digits=inp.value.replace(/\D/g,'');
+  // Limita a 4 dígitos (ex: 0645 = 6:45, 700 = 7:00)
+  if(digits.length>4) digits=digits.slice(0,4);
+  // Formata como M:SS ou MM:SS conforme qtd de dígitos
+  if(digits.length<=2){
+    inp.value=digits;
+  } else {
+    const mins=digits.slice(0,-2);
+    const secs=digits.slice(-2);
+    inp.value=mins+':'+secs;
+  }
+}
+
+function savePace(w,d){
+  const inp=document.getElementById(`pi-${w}-${d}`);
+  if(!inp) return;
+  let v=inp.value.trim();
+  // Garante formato M:SS
+  const digits=v.replace(/\D/g,'');
+  if(!digits){ return; }
+  let mins,secs;
+  if(digits.length<=2){
+    mins=digits; secs='00';
+  } else {
+    mins=digits.slice(0,-2);
+    secs=digits.slice(-2);
+  }
+  // Valida segundos 00-59
+  if(parseInt(secs)>59){
+    inp.style.borderColor='var(--vm)';
+    setTimeout(()=>inp.style.borderColor='',1500);
+    return;
+  }
+  v=mins+':'+secs;
+  inp.value=v;
+  paces[key(w,d)]=v;
+  save();
+  const msg=document.getElementById(`psm-${w}-${d}`);
+  if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',2000);}
+  renderWeek(w);
+  setTimeout(()=>{
+    const det=document.getElementById(`dd-${w}-${d}`);
+    if(det && !det.classList.contains('open')) det.classList.add('open');
+  },50);
+  updProg();
+}
+
+function saveNota(w,d){
+  const inp=document.getElementById(`ni-${w}-${d}`);
+  if(!inp) return;
+  notas[key(w,d)]=inp.value;
+  save();
+  inp.style.borderColor='var(--vd)';
+  setTimeout(()=>inp.style.borderColor='',1500);
+}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nitem').forEach((n,i)=>{
+    const ns=['home','ref','prog'];
+    n.classList.toggle('active',ns[i]===name);
+    const dot=n.querySelector('.ndot');
+    if(dot) dot.remove();
+    if(ns[i]===name){const dv=document.createElement('div');dv.className='ndot';n.appendChild(dv);}
+  });
+  if(name==='prog') updProg();
+}
+
+function updProg(){
+  const total=72; let done=0,skip=0;
+  for(let w=0;w<12;w++)
+    for(let d=0;d<7;d++){
+      const k=key(w,d);
+      if(status[k]==='done') done++;
+      if(status[k]==='skip') skip++;
+    }
+  const pct=Math.round(done/total*100);
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('prog-lbl').textContent=`${done} de ${total} treinos concluídos (${pct}%)`;
+  document.getElementById('stat-done').textContent=done;
+  document.getElementById('stat-skip').textContent=skip;
+
+  // semanas
+  const wl=document.getElementById('week-prog');
+  wl.innerHTML=Array.from({length:12},(_,w)=>{
+    let wd=0;
+    for(let d=0;d<7;d++) if(status[key(w,d)]==='done') wd++;
+    const p=Math.round(wd/6*100);
+    const col=p>=80?'var(--vd)':p>=50?'var(--tl)':'var(--am)';
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+        <span style="color:var(--text2)">Semana ${w+1}</span>
+        <span style="color:var(--text)">${wd}/6 (${p}%)</span>
+      </div>
+      <div class="pbar-wrap"><div class="pbar-fill" style="width:${p}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
+
+  // histórico de paces
+  const ph=document.getElementById('pace-history-list');
+  const dias_pt=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  let items=[];
+  for(let w=0;w<12;w++)
+    for(let d=0;d<7;d++){
+      const k=key(w,d);
+      if(paces[k]){
+        const tr=SEMANAS[w][d];
+        items.push({w,d,pace:paces[k],tipo:tr.tipo,dia:tr.dia,sem:w+1,nota:notas[k]||''});
+      }
+    }
+  if(items.length===0){
+    ph.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px 0;">Nenhum pace registrado ainda.</div>';
+  } else {
+    items.reverse();
+    ph.innerHTML=items.map(it=>`
+      <div class="ph-item" onclick="selWeek(${it.w});showScreen('home')">
+        <div>
+          <div class="ph-day">Sem ${it.sem} · ${it.dia} — ${it.tipo}</div>
+          ${it.nota?`<div class="ph-note">${it.nota.substring(0,50)}${it.nota.length>50?'…':''}</div>`:''}
+        </div>
+        <div class="ph-pace">${it.pace}<span style="font-size:10px;color:var(--text2)">/km</span></div>
+      </div>`).join('');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(function init(){
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  try{document.getElementById('today-lbl').textContent=dias[new Date().getDay()];}catch(e){}
+  renderBar();renderWeek(0);updProg();
+})();
+</script>
+</body>
+</html>
